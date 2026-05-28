@@ -60,8 +60,8 @@ var Radial = (function () {
 
 Load order in `index.html`:
 
-1. idb-keyval CDN (synchronous, no defer)
-2. Lucide CDN (synchronous, no defer)
+1. idb-keyval CDN (defer)
+2. Lucide CDN (defer)
 3. `db.js → utils.js → log.js → radial.js → grid.js → stats.js → main.js` (all defer)
 
 **Event coordination:** After any write, `log.js` dispatches `document.dispatchEvent(new CustomEvent("sessions-updated"))`. `main.js` listens and calls `Radial.render()`, `Grid.render()`, `Stats.render()`.

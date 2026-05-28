@@ -13,9 +13,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap"
+    /></noscript>
 
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/visualizations.css" />
@@ -281,9 +291,9 @@
       </p>
     </footer>
 
-    <!-- CDN dependencies — synchronous, no defer, must load before app scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    <!-- CDN dependencies — deferred; execution order preserved since all scripts below are also defer -->
+    <script defer src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 
     <!-- App scripts — classic scripts in dependency order -->
     <script defer src="js/db.js"></script>
