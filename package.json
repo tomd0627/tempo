@@ -1,0 +1,35 @@
+{
+  "name": "tempo",
+  "version": "1.0.0",
+  "description": "Tempo — a local-first music practice tracker with canvas visualizations",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "serve": "npx serve . -l 3000",
+    "lint:js": "eslint \"js/**/*.js\"",
+    "lint:css": "stylelint \"css/**/*.css\"",
+    "lint:html": "html-validate index.html",
+    "lint:format": "prettier --check .",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html && npm run lint:format",
+    "format": "prettier --write .",
+    "lighthouse": "npx lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html --chrome-flags=\"--headless\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "eslint": "^10.0.0",
+    "globals": "^17.0.0",
+    "html-validate": "^9.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^17.0.0",
+    "prettier": "^3.0.0",
+    "stylelint": "^17.0.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-order": "^8.1.1"
+  },
+  "lint-staged": {
+    "*.{html,css,js,json,md}": "prettier --write",
+    "js/**/*.js": "eslint --fix",
+    "*.css": "stylelint --fix",
+    "*.html": "html-validate"
+  }
+}

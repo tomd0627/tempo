@@ -427,3 +427,24 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Node / npm
+node_modules/
+package-lock.json
+
+# Tooling caches
+.stylelintcache
+.eslintcache
+.prettiercache
+
+# Netlify
+.netlify/
+deno.lock
+
+# Lighthouse
+lighthouse-report.html
+lighthouse-report.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db
