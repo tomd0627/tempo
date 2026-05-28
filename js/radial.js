@@ -47,7 +47,7 @@ var Radial = (function () {
   }
 
   function draw(progress) {
-    var i, angle, cos, sin, frac, r, isToday, dAlpha, dLabelR, totalMins;
+    var i, angle, cos, sin, frac, r, isToday, totalMins;
     var w = CANVAS_SIZE;
     var h = CANVAS_SIZE;
     var cx = w / 2;
@@ -107,21 +107,6 @@ var Radial = (function () {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(DAYS[i], cx + cos * (MAX_R + 22), cy + sin * (MAX_R + 22));
-
-      // Duration label (fades in after spoke is mostly drawn)
-      if (weekData[i].total > 0 && progress > 0.6) {
-        dAlpha = Math.max(0, (progress - 0.6) / 0.4);
-        ctx.globalAlpha = dAlpha;
-        ctx.fillStyle = COLOR_MUTED;
-        ctx.font = "400 9px 'JetBrains Mono', monospace";
-        dLabelR = r + 14;
-        ctx.fillText(
-          Utils.formatMinutes(weekData[i].total),
-          cx + cos * dLabelR,
-          cy + sin * dLabelR,
-        );
-        ctx.globalAlpha = 1;
-      }
     }
 
     // Center circle
@@ -192,6 +177,8 @@ var Radial = (function () {
     var dates = Utils.getISOWeekDates(new Date(), weekOffset);
     document.getElementById("week-label").textContent =
       Utils.formatDateShort(dates[0]) + " – " + Utils.formatDateShort(dates[6]);
+    document.getElementById("week-next").disabled = weekOffset === 0;
+    document.getElementById("week-today").hidden = weekOffset === 0;
   }
 
   function buildTooltipHTML(dayData) {
@@ -344,6 +331,11 @@ var Radial = (function () {
         weekOffset += 1;
         render();
       }
+    });
+
+    document.getElementById("week-today").addEventListener("click", function () {
+      weekOffset = 0;
+      render();
     });
   }
 

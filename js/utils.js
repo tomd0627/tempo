@@ -31,7 +31,21 @@ var Utils = (function () {
     return week;
   }
 
+  // Parse a date value as a local-time Date to avoid UTC-midnight timezone drift on
+  // YYYY-MM-DD strings (which new Date() treats as UTC).
+  function parseDateStr(date) {
+    var p;
+    if (typeof date === "string") {
+      p = date.split("-");
+      return new Date(+p[0], +p[1] - 1, +p[2]);
+    }
+    return date instanceof Date ? date : new Date(date);
+  }
+
   function dateKey(date) {
+    if (typeof date === "string") {
+      return date;
+    }
     var d = date instanceof Date ? date : new Date(date);
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, "0");
@@ -55,17 +69,17 @@ var Utils = (function () {
   }
 
   function formatDate(date) {
-    var d = date instanceof Date ? date : new Date(date);
+    var d = parseDateStr(date);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   }
 
   function formatDateShort(date) {
-    var d = date instanceof Date ? date : new Date(date);
+    var d = parseDateStr(date);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
   function isToday(date) {
-    var d = date instanceof Date ? date : new Date(date);
+    var d = parseDateStr(date);
     var now = new Date();
     return (
       d.getFullYear() === now.getFullYear() &&

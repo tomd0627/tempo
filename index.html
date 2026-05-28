@@ -61,6 +61,15 @@
             <button id="week-next" class="week-nav__btn" type="button" aria-label="Next week">
               <span data-lucide="chevron-right" aria-hidden="true"></span>
             </button>
+            <button
+              id="week-today"
+              class="week-nav__btn"
+              type="button"
+              aria-label="Jump to current week"
+              hidden
+            >
+              <span data-lucide="calendar" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
 
@@ -158,6 +167,25 @@
                 ></span>
               </div>
 
+              <div class="form-field" id="field-instrument-custom-wrap" hidden>
+                <label class="form-label" for="field-instrument-custom">Instrument name</label>
+                <input
+                  class="form-input"
+                  id="field-instrument-custom"
+                  name="instrumentCustom"
+                  type="text"
+                  placeholder="e.g. banjo, ukulele, recorder"
+                  maxlength="60"
+                  aria-describedby="field-instrument-custom-error"
+                />
+                <span
+                  class="form-error"
+                  id="field-instrument-custom-error"
+                  role="alert"
+                  aria-live="polite"
+                ></span>
+              </div>
+
               <div class="form-field">
                 <label class="form-label" for="field-duration">Duration (minutes)</label>
                 <input
@@ -212,16 +240,6 @@
               <label class="form-label" for="filter-instrument">Filter</label>
               <select class="form-input form-input--select form-input--sm" id="filter-instrument">
                 <option value="">All instruments</option>
-                <option value="guitar">Guitar</option>
-                <option value="piano">Piano</option>
-                <option value="bass">Bass</option>
-                <option value="drums">Drums</option>
-                <option value="violin">Violin</option>
-                <option value="cello">Cello</option>
-                <option value="flute">Flute</option>
-                <option value="vocals">Vocals</option>
-                <option value="voice">Voice</option>
-                <option value="other">Other</option>
               </select>
             </div>
 

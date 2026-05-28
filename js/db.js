@@ -9,6 +9,9 @@ var Db = (function () {
   var idbEntries = idbKeyval.entries;
 
   function dateKey(date) {
+    if (typeof date === "string") {
+      return date;
+    }
     var d = date instanceof Date ? date : new Date(date);
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, "0");

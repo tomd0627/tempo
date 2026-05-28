@@ -314,6 +314,16 @@ h4 {
   margin-inline: var(--space-2);
 }
 
+/* ── Mobile ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 680px) {
+  .view--week .view__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}
+
 /* ── Reduced motion ─────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

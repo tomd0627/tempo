@@ -97,9 +97,17 @@
 
 /* ── Session list ───────────────────────────────────────────────────────── */
 
+.log-list-panel {
+  display: flex;
+  flex-direction: column;
+  max-block-size: 70vh;
+  overflow: hidden;
+}
+
 .session-list-header {
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: var(--space-3);
   margin-block-end: var(--space-4);
 }
@@ -111,8 +119,11 @@
 
 .session-list {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--space-3);
+  min-block-size: 0;
+  overflow-y: auto;
 }
 
 .session-item {

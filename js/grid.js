@@ -113,18 +113,21 @@ var Grid = (function () {
   }
 
   function drawMonthLabels() {
-    var w, cell, m;
+    var w, cell, m, x;
     var lastMonth = -1;
+    var lastLabelX = -Infinity;
     for (w = 0; w < WEEKS; w++) {
       cell = cellsData[w * DAYS]; // Mon of this column
       m = cell.date.getMonth();
-      if (m !== lastMonth) {
+      x = w * CELL_STEP;
+      if (m !== lastMonth && x - lastLabelX >= 42) {
         ctx.fillStyle = COLOR_MUTED;
         ctx.font = "400 10px 'JetBrains Mono', monospace";
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(MONTH_NAMES[m], w * CELL_STEP, 4);
+        ctx.fillText(MONTH_NAMES[m], x, 4);
         lastMonth = m;
+        lastLabelX = x;
       }
     }
   }
@@ -215,9 +218,25 @@ var Grid = (function () {
 
     var absX = canvasRect.left - wrapperRect.left + cellX * scaleX;
     var absY = canvasRect.top - wrapperRect.top + cellY * scaleY;
+    var cellW = CELL_SIZE * scaleX;
+    var cellH = CELL_SIZE * scaleY;
+    var tipW = tooltip.offsetWidth;
+    var tipH = tooltip.offsetHeight;
+    var left = absX + cellW + 4;
+    var top = absY - 4;
 
-    tooltip.style.left = absX + CELL_SIZE * scaleX + 4 + "px";
-    tooltip.style.top = absY - 4 + "px";
+    // Flip horizontally when the tooltip would overflow the canvas right edge.
+    if (left + tipW > canvasRect.width) {
+      left = absX - tipW - 4;
+    }
+
+    // Flip vertically when the tooltip would overflow the canvas bottom edge.
+    if (top + tipH > canvasRect.height) {
+      top = absY + cellH - tipH + 4;
+    }
+
+    tooltip.style.left = Math.max(0, left) + "px";
+    tooltip.style.top = Math.max(0, top) + "px";
   }
 
   function hideTooltip() {

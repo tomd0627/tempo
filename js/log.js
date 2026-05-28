@@ -5,10 +5,44 @@ var Log = (function () {
 
   var editingSession = null; // { id, dateStr } when editing
 
+  // Instruments that map directly to a <select> option (excludes "other", which triggers custom input).
+  var STANDARD_INSTRUMENTS = [
+    "guitar",
+    "piano",
+    "bass",
+    "drums",
+    "violin",
+    "cello",
+    "flute",
+    "vocals",
+    "voice",
+  ];
+
+  function buildFilterOptions(sessions) {
+    var select = document.getElementById("filter-instrument");
+    var currentVal = select.value;
+    var seen = {};
+    var instruments = [];
+
+    sessions.forEach(function (s) {
+      if (!seen[s.instrument]) {
+        seen[s.instrument] = true;
+        instruments.push(s.instrument);
+      }
+    });
+    instruments.sort();
+
+    var html = '<option value="">All instruments</option>';
+    instruments.forEach(function (inst) {
+      html +=
+        '<option value="' + escapeHtml(inst) + '">' + escapeHtml(capitalise(inst)) + "</option>";
+    });
+    select.innerHTML = html;
+    select.value = currentVal;
+  }
+
   async function renderSessions() {
     var container = document.getElementById("session-list");
-    var filterVal = document.getElementById("filter-instrument").value;
-
     var allEntries = await Db.getAllEntries();
 
     // Flatten all sessions and sort by date desc, then by createdAt desc
@@ -26,19 +60,22 @@ var Log = (function () {
       return b.createdAt - a.createdAt;
     });
 
-    if (filterVal) {
-      allSessions = allSessions.filter(function (s) {
-        return s.instrument === filterVal;
-      });
-    }
+    buildFilterOptions(allSessions);
 
-    if (allSessions.length === 0) {
+    var filterVal = document.getElementById("filter-instrument").value;
+    var displaySessions = filterVal
+      ? allSessions.filter(function (s) {
+          return s.instrument === filterVal;
+        })
+      : allSessions;
+
+    if (displaySessions.length === 0) {
       container.innerHTML = buildEmptyState(filterVal);
       lucide.createIcons({ attrs: { class: ["lucide"] } });
       return;
     }
 
-    var html = allSessions
+    var html = displaySessions
       .map(function (s) {
         return buildSessionItem(s);
       })
@@ -130,6 +167,8 @@ var Log = (function () {
   function validateForm(form) {
     var valid = true;
     var fields = ["date", "instrument", "duration"];
+    var customInput = form.elements["instrumentCustom"];
+    var customError = document.getElementById("field-instrument-custom-error");
 
     fields.forEach(function (name) {
       var input = form.elements[name];
@@ -156,6 +195,17 @@ var Log = (function () {
       }
     });
 
+    if (form.elements["instrument"].value === "other") {
+      if (!customInput.value.trim()) {
+        customInput.classList.add("is-invalid");
+        customError.textContent = "Please enter your instrument name.";
+        valid = false;
+      } else {
+        customInput.classList.remove("is-invalid");
+        customError.textContent = "";
+      }
+    }
+
     return valid;
   }
 
@@ -171,6 +221,11 @@ var Log = (function () {
     var instrument = form.elements["instrument"].value;
     var duration = parseInt(form.elements["duration"].value, 10);
     var focusArea = form.elements["focusArea"].value.trim();
+    var customName = form.elements["instrumentCustom"].value.trim();
+
+    if (instrument === "other" && customName) {
+      instrument = customName.toLowerCase();
+    }
 
     if (editingSession) {
       await Db.deleteSession(editingSession.id, editingSession.dateStr);
@@ -189,6 +244,7 @@ var Log = (function () {
 
     form.reset();
     setFieldDate(form);
+    resetCustomField();
     exitEditMode();
 
     await renderSessions();
@@ -206,6 +262,15 @@ var Log = (function () {
     }
   }
 
+  function resetCustomField() {
+    var wrap = document.getElementById("field-instrument-custom-wrap");
+    var input = document.getElementById("field-instrument-custom");
+    wrap.hidden = true;
+    input.value = "";
+    input.classList.remove("is-invalid");
+    document.getElementById("field-instrument-custom-error").textContent = "";
+  }
+
   async function startEdit(id, dateStr) {
     var sessions = await Db.getSessions(dateStr);
     var session = sessions.find(function (s) {
@@ -216,10 +281,20 @@ var Log = (function () {
     }
 
     var form = document.getElementById("log-form");
+    var isStandard = STANDARD_INSTRUMENTS.indexOf(session.instrument) !== -1;
+
     form.elements["date"].value = session.date;
-    form.elements["instrument"].value = session.instrument;
     form.elements["duration"].value = session.duration;
     form.elements["focusArea"].value = session.focusArea || "";
+
+    if (isStandard) {
+      form.elements["instrument"].value = session.instrument;
+      resetCustomField();
+    } else {
+      form.elements["instrument"].value = "other";
+      document.getElementById("field-instrument-custom-wrap").hidden = false;
+      form.elements["instrumentCustom"].value = session.instrument;
+    }
 
     editingSession = { id: id, dateStr: dateStr };
 
@@ -274,9 +349,18 @@ var Log = (function () {
 
     form.addEventListener("submit", handleSubmit);
 
+    document.getElementById("field-instrument").addEventListener("change", function () {
+      var wrap = document.getElementById("field-instrument-custom-wrap");
+      wrap.hidden = this.value !== "other";
+      if (wrap.hidden) {
+        resetCustomField();
+      }
+    });
+
     document.getElementById("log-cancel").addEventListener("click", function () {
       form.reset();
       setFieldDate(form);
+      resetCustomField();
       exitEditMode();
     });
 
