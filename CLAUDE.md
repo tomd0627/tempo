@@ -111,4 +111,4 @@ npm run lighthouse         # Lighthouse CLI (requires dev server running)
 6. Year-view grid (grid.js) — DONE
 7. Stats panel (stats.js) — DONE
 8. Pre-commit tooling — DONE
-9. Final audit (Lighthouse, a11y, contrast, README, HANDOFF) — TODO
+9. Final audit (Lighthouse, a11y, contrast, README, HANDOFF) — DONE
